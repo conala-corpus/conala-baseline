@@ -78,6 +78,7 @@ annot: !Experiment
       alpha: 0.001
     batcher: !WordSrcBatcher
       avg_batch_size: 64
+    initial_patience: 10
     patience: 3
     lr_decay: 0.5
     restart_trainer: True
