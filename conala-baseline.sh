@@ -23,10 +23,11 @@ python $WDIR/conala_eval/json2seq_input.py conala-test.json.seq2seq conala-test.
 python $WDIR/conala_eval/json2seq_input.py conala-mined.jsonl.seq2seq conala-mined.intent conala-mined.snippet
 
 # Split off a 400-line dev set from the training set
+# Also, concatenate the first 100000 lines of mined data
 for f in intent snippet; do
   head -n 400 < conala-train.$f > conala-dev.$f
   tail -n +401 < conala-train.$f > conala-trainnodev.$f
-  cat conala-{trainnodev,mined}.$f > conala-trainnodev+mined.$f
+  cat conala-train.$f <(head -n 100000 conala-mined.$f) > conala-trainnodev+mined.$f
 done
 
 cd $WDIR
