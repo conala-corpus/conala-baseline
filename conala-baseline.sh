@@ -32,5 +32,19 @@ done
 
 cd $WDIR
 
-xnmt --dynet-gpu $SDIR/annot.yaml
-xnmt --dynet-gpu $SDIR/annotmined.yaml
+# Train and package seq2seq models on annotated+mined and annotated only data
+for setting in annotmined annot; do
+
+  xnmt --dynet-gpu $SDIR/$setting.yaml
+  
+  python conala_eval/seq_output_to_code.py results/$setting.test.hyp conala-corpus/conala-test.json.seq2seq results/$setting.test.json
+  
+  cd $WDIR/results
+  
+  cp $setting.test.json answer.txt
+  zip $setting.zip answer.txt
+
+cd $WDIR
+
+# annotmined.zip and annot.zip can be submitted to the CodaLab leaderboard:
+# 
