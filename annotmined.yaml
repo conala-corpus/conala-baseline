@@ -18,9 +18,9 @@ annotmined: !Experiment
       in_files:
       - 'conala-corpus/conala-trainnodev+mined.intent'
       - 'conala-corpus/conala-trainnodev+mined.snippet'
+      - 'conala-corpus/conala-dev.intent'
       - 'conala-corpus/conala-dev.snippet'
-      - 'conala-corpus/conala-dev.snippet'
-      - 'conala-corpus/conala-test.snippet'
+      - 'conala-corpus/conala-test.intent'
       - 'conala-corpus/conala-test.snippet'
       out_files:
       - 'conala-corpus/conala-trainnodev+mined.tmspm16000.intent'

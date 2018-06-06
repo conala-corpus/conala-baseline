@@ -18,9 +18,9 @@ annot: !Experiment
       in_files:
       - 'conala-corpus/conala-trainnodev.intent'
       - 'conala-corpus/conala-trainnodev.snippet'
+      - 'conala-corpus/conala-dev.intent'
       - 'conala-corpus/conala-dev.snippet'
-      - 'conala-corpus/conala-dev.snippet'
-      - 'conala-corpus/conala-test.snippet'
+      - 'conala-corpus/conala-test.intent'
       - 'conala-corpus/conala-test.snippet'
       out_files:
       - 'conala-corpus/conala-trainnodev.tspm4000.intent'

@@ -44,7 +44,9 @@ for setting in annotmined annot; do
   cp $setting.test.json answer.txt
   zip $setting.zip answer.txt
 
-cd $WDIR
+  cd $WDIR
+
+done
 
 # annotmined.zip and annot.zip can be submitted to the CodaLab leaderboard:
 # 
