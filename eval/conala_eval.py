@@ -4,46 +4,64 @@ import sys
 import os
 import os.path
 import re
-from StringIO import StringIO
 import token
 import tokenize
+import argparse
 
 import bleu_score
 
 # Main function for CodaLab evaluation purposes
 def main():
 
-    input_dir = sys.argv[1]
-    output_dir = sys.argv[2]
+    p = argparse.ArgumentParser(description="Evaluator for CoNaLa",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    submit_dir = os.path.join(input_dir, 'res')
-    truth_dir = os.path.join(input_dir, 'ref')
+    p.add_argument("--input_dir",
+                   help="input directory, containing 'res/answer.txt' and 'ref/truth.txt'",
+                   default=None)
+    p.add_argument("--input_ref",
+                   help="input reference file",
+                   default=None)
+    p.add_argument("--input_hyp",
+                   help="input hypothesis file file",
+                   default=None)
+    p.add_argument("--output_file",
+                   help="output score file",
+                   default=None)
+    p.add_argument("--strip_ref_metadata",
+                   help="strip metadata from the reference and get only the code",
+                   action="store_true")
 
-    if not os.path.isdir(submit_dir):
-        print "%s doesn't exist" % submit_dir
+    args = p.parse_args()
 
-    if os.path.isdir(submit_dir) and os.path.isdir(truth_dir):
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+    if not (args.input_dir or (args.input_ref and args.input_hyp)):
+        raise ValueError("Must specify input_dir or input_ref+input_hyp")
 
-        output_filename = os.path.join(output_dir, 'scores.txt')
-        output_file = open(output_filename, 'wb')
+    input_hyp = args.input_hyp if args.input_hyp else os.path.join(args.input_dir, 'res', 'answer.txt')
+    input_ref = args.input_ref if args.input_ref else os.path.join(args.input_dir, 'ref', 'truth.txt')
 
-        truth_file = os.path.join(truth_dir, "truth.txt")
-        f_reference = open(truth_file)
+    with open(input_hyp, 'r') as f_hyp:
+        c_hyp = json.load(f_hyp)
+        c_hyp = [tokenize_for_bleu_eval(s) for s in c_hyp]
+    with open(input_ref, 'r') as f_ref:
+        c_ref = json.load(f_ref)
+        if args.strip_ref_metadata:
+          c_ref = [x['snippet'] for x in c_ref]
+        c_ref = [tokenize_for_bleu_eval(s) for s in c_ref]
 
-        submission_answer_file = os.path.join(submit_dir, "answer.txt")
-        f_submission = open(submission_answer_file)
+    if len(c_hyp) != len(c_ref):
+        raise ValueError('Length of hypothesis and reference don\'t match: {} != {}'.format(len(c_hyp), len(c_ref)))
 
-        a = parse_file_list(f_reference)
-        b = parse_file_list(f_submission)
-        b = [tokenize_for_bleu_eval(s) for s in b]
+    f_out = open(args.output_file, 'w') if args.output_file else sys.stdout
 
-        bleu = bleu_score.compute_bleu(a, b, smooth=True)[0]
+    bleu_tup = bleu_score.compute_bleu([[x] for x in c_ref], c_hyp, smooth=False)
+    bleu = bleu_tup[0]
+    exact = sum([1 if h == r else 0 for h, r in zip(c_hyp, c_ref)])/len(c_hyp)
 
-        output_file.write('bleu:{0:.2f}\n'.format(bleu * 100))
+    f_out.write('bleu:{0:.2f}\n'.format(bleu * 100))
+    f_out.write('exact:{0:.2f}\n'.format(exact * 100))
 
-        output_file.close()
+    f_out.close()
 
 """ Parses a file in the natural .jsonl format that the Conala corpus comes in.
     @param f: .jsonl file containing snippets
@@ -56,9 +74,6 @@ def parse_file_json(f):
         toks = tokenize_code(snippet['snippet'])
         result.append(toks)
     return result
-
-def parse_file_list(f):
-    return json.load(f)
 
 """ The tokenizer that we use for code submissions, from Wang Ling et al., Latent Predictor Networks for Code Generation (2016)
     @param code: string containing a code snippet
@@ -108,7 +123,7 @@ def get_reference_list(reference_file_name):
 """
 def evaluate_bleu(reference_list, hypothesis_list):
     b = [tokenize_for_bleu_eval(s) for s in hypothesis_list]
-    return bleu_score.compute_bleu(reference_list, b, smooth=True)
+    return bleu_score.compute_bleu(reference_list, b, smooth=False)
 
 if __name__ == '__main__':
     main()
