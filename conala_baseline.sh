@@ -37,7 +37,7 @@ for setting in annotmined annot; do
   python $SDIR/preproc/seq2seq_output_to_code.py results/$setting.test.hyp conala-corpus/conala-test.json.seq2seq results/$setting.test.json
 
   # Calculate the BLEU score
-  python $SDIR/eval/conala_eval.py --strip_ref_metadata --input_ref conala-corpus/conala-test.json --input_hyp results/annotmined.test.json
+  python $SDIR/eval/conala_eval.py --strip_ref_metadata --input_ref conala-corpus/conala-test.json --input_hyp results/$setting.test.json
   
   # Package the output for CodaLab
   cd $WDIR/results
