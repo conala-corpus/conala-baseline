@@ -71,7 +71,7 @@ def parse_file_json(f):
     snippet_list = json.load(f)
     result = []
     for snippet in snippet_list:
-        toks = tokenize_code(snippet['snippet'])
+        toks = tokenize_for_bleu_eval(snippet['snippet'])
         result.append(toks)
     return result
 
