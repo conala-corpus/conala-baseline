@@ -13,8 +13,12 @@ import itertools
 # sys.setdefaultencoding('utf-8')
 
 import token as tk
-from StringIO import StringIO
 from tokenize import generate_tokens
+
+try:
+  from StringIO import StringIO
+except:
+  from io import StringIO
 
 
 def detokenize_code(code_tokens):
