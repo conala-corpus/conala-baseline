@@ -31,6 +31,9 @@ def main():
     p.add_argument("--output_dir",
                    help="output score directory which will contain output_dir/scores.txt",
                    default=None)
+    p.add_argument("--no_exact_match",
+                   help="only output bleu scores and not exact_match score",
+                   action="store_true")
     p.add_argument("--strip_ref_metadata",
                    help="strip metadata from the reference and get only the code",
                    action="store_true")
@@ -67,7 +70,8 @@ def main():
     exact = sum([1 if h == r else 0 for h, r in zip(c_hyp, c_ref)])/len(c_hyp)
 
     f_out.write('bleu:{0:.2f}\n'.format(bleu * 100))
-    f_out.write('exact:{0:.2f}\n'.format(exact * 100))
+    if not args.no_exact_match:
+        f_out.write('exact:{0:.2f}\n'.format(exact * 100))
 
     f_out.close()
 
