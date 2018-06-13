@@ -23,10 +23,13 @@ def main():
                    help="input reference file",
                    default=None)
     p.add_argument("--input_hyp",
-                   help="input hypothesis file file",
+                   help="input hypothesis file",
                    default=None)
     p.add_argument("--output_file",
                    help="output score file",
+                   default=None)
+    p.add_argument("--output_dir",
+                   help="output score directory which will contain output_dir/scores.txt",
                    default=None)
     p.add_argument("--strip_ref_metadata",
                    help="strip metadata from the reference and get only the code",
@@ -52,7 +55,12 @@ def main():
     if len(c_hyp) != len(c_ref):
         raise ValueError('Length of hypothesis and reference don\'t match: {} != {}'.format(len(c_hyp), len(c_ref)))
 
-    f_out = open(args.output_file, 'w') if args.output_file else sys.stdout
+    if args.output_file:
+        f_out = open(args.output_file, 'w')
+    elif args.output_dir:
+        f_out = open(os.path.join(args.output_dir, 'scores.txt'), 'w')
+    else:
+        f_out = sys.stdout
 
     bleu_tup = bleu_score.compute_bleu([[x] for x in c_ref], c_hyp, smooth=False)
     bleu = bleu_tup[0]
