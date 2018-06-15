@@ -1,0 +1,2 @@
+command: python $program/evaluate.py --input_dir $input --output_dir $output --no_exact_match
+description: Example competition evaluation program.
