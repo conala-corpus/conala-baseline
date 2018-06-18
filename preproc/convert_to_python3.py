@@ -13,7 +13,10 @@ args = parser.parse_args()
 
 with open(args.infile, 'r', encoding='utf-8', errors='ignore') as fjson, \
      open(args.outfile, 'w', encoding='utf-8', errors='ignore') as fdump:
-  shutil.rmtree('tmp/')
+  
+  if os.path.exists('tmp/'):
+    shutil.rmtree('tmp/')
+  
   os.mkdir('tmp')
   if args.filetype == 'annotated':
     examples = json.load(fjson)
@@ -32,7 +35,7 @@ with open(args.infile, 'r', encoding='utf-8', errors='ignore') as fjson, \
       examples.append(example)
       with open('tmp/tmp-{}.py'.format(i), 'w', encoding='utf-8', errors='ignore') as fout:
         print(example['snippet'], file=fout)
-    os.system('2to3 -w tmp/')
+    os.system('2to3 -x map -x zip -w tmp/')
     for i, example in enumerate(examples):
       with open('tmp/tmp-{}.py'.format(i), 'r', encoding='utf-8', errors='ignore') as fin:
         example['snippet'] = ''.join(fin).strip()
