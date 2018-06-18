@@ -14,7 +14,7 @@ In the `preproc` directory, there are a number of preprocessing/evaluation scrip
 
 The baseline makes a system to generate Python from English commands by training a standard neural machine translation model.
 
-It requires a GPU machine, and uses the neural machine translation system [xnmt](https://github.com/neulab/xnmt/), so first install this. Make sure you also install all the packages in the requirements-extra.txt file by running `pip install -r /path/to/xnmt/requirements-extra.txt`.
+It requires a GPU machine, and uses the neural machine translation system [xnmt](https://github.com/neulab/xnmt/) (specifically, commit `d9e227b`), so first install this. Make sure you also install all the packages in the requirements-extra.txt file by running `pip install -r /path/to/xnmt/requirements-extra.txt`.
 
 Also, install the requirements for this package itself by running `pip install -r requirements.txt`.
 
